@@ -56,12 +56,15 @@ const map = new mapboxgl.Map({
 
 
 //flyto
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-} else {
-    console.error('A API de Geolocalização não é suportada');
-    // Exibir uma mensagem de erro ou fornecer uma alternativa
+function flytocustom() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    } else {
+        console.error('A API de Geolocalização não é suportada');
+        // Exibir uma mensagem de erro ou fornecer uma alternativa
+    }
 }
+
 //
 
 
@@ -88,6 +91,14 @@ if (navigator.geolocation) {
         .addTo(map);
 }
 //
+
+function rotateCamera(timestamp) {
+    // clamp the rotation between 0 -360 degrees
+    // Divide timestamp by 100 to slow rotation to ~10 degrees / sec
+    map.rotateTo((timestamp / 100) % 360, { duration: 0 });
+    // Request the next frame of the animation.
+    requestAnimationFrame(rotateCamera);
+}
 
 map.on('style.load', () => {
     map.addSource('line', {
@@ -122,6 +133,11 @@ map.on('style.load', () => {
             ]
         }
     });
+
+    flytocustom();
+
+   // rotateCamera(0);
+
 });
 
 document

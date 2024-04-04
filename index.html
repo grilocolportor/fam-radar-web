@@ -6,67 +6,22 @@
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+<script src= 'firebase' type="module"></script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4884786427235490"
+     crossorigin="anonymous"></script>
+
+<link href="maps_styles.css" rel="stylesheet">
+
+<!-- Adicione outras bibliotecas do Firebase conforme necessário -->
 <style>
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 </style>
 </head>
+
 <body>
-<style>
-    .marker {
-        display: block;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        padding: 0;
-    }
 
-
-    .map-overlay {
-        font:
-            12px/20px 'Helvetica Neue',
-            Arial,
-            Helvetica,
-            sans-serif;
-        position: absolute;
-        width: 200px;
-        top: 0;
-        left: 0;
-        padding: 10px;
-    }
-
-    .map-overlay .map-overlay-inner {
-        background-color: #fff;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    .map-overlay-inner fieldset {
-        display: flex;
-        justify-content: space-between;
-        border: none;
-    }
-
-    .map-overlay-inner label {
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .map-overlay-inner .select-fieldset {
-        display: block;
-    }
-
-    .map-overlay-inner .select-fieldset label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .map-overlay-inner .select-fieldset select {
-        width: 100%;
-    }
-</style>
 
 <div id="map"></div>
 
