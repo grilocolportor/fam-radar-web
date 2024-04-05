@@ -1,3 +1,45 @@
+
+// function getdaddos(){
+//     const db = firebase.firestore();
+  
+//     // Adicionar dados ao Firestore
+//     // db.collection("users").add({
+//     //   firstName: "John",
+//     //   lastName: "Doe"
+//     // })
+//     // .then((docRef) => {
+//     //   console.log("Documento escrito com ID: ", docRef.id);
+//     // })
+//     // .catch((error) => {
+//     //   console.error("Erro ao adicionar documento: ", error);
+//     // });
+    
+//     //<input type="checkbox" id="scrollZoom" checked="checked"></input>
+    
+//     db.collection("users").get().then((querySnapshot) => {
+//         const dados = [];
+//         querySnapshot.forEach((doc) => {
+//           dados.push({
+//             id: doc.id,
+//             nome: doc.data().nome,
+//             idade: doc.data().idade,
+//           });
+//         });
+//         const jsonDados = JSON.stringify(dados);
+//         console.log(jsonDados);
+//         // Utilize o jsonDados aqui
+    
+//         const itemElement = document.createElement("li");
+//         itemElement.innerHTML = `
+//           <h3>${item.nome}</h3>
+//           <p>Idade: ${item.idade}</p>
+//         `;
+//         itemElement.classList.add("item"); // Adicionar uma classe para estilização
+//         dataContainer.appendChild(itemElement);
+//       });
+//   }
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoidmVuYW5jaW83NzciLCJhIjoiY2x0Znd2c3doMHZpYjJxbzUza3k0cnJ4ZCJ9.OH6-0UT-DPVS1KpeRksJsQ';
 
 //marker
@@ -136,6 +178,8 @@ map.on('style.load', () => {
 
     flytocustom();
 
+   // getdaddos();
+
    // rotateCamera(0);
 
 });
@@ -160,14 +204,15 @@ function successCallback(position) {
     var longitude = position.coords.longitude;
 
     // Atualizar o texto com a latitude e longitude
-    document.getElementById('latitude').textContent = latitude;
-    document.getElementById('longitude').textContent = longitude;
+    // document.getElementById('latitude').textContent = latitude;
+    // document.getElementById('longitude').textContent = longitude;
 
     // Atualizar o mapa com a localização do usuário
     map.flyTo({
         center: [longitude, latitude],
         zoom: 15.1,
         essential: true
+        
 
     });
 
@@ -181,6 +226,11 @@ function errorCallback(error) {
     console.error('Erro ao obter a localização:', error);
     // Exibir uma mensagem de erro ou fornecer uma alternativa
 }
+
+
+  
+
+ 
 
 
 
