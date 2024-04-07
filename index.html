@@ -1,35 +1,67 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Change a map's style configuration property</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+    <head>
+        <meta charset="utf-8">
+        <title>Change a map's style configuration property</title>
+        <meta name="viewport"
+            content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
+        <script
+            src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+        <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4884786427235490"
+            crossorigin="anonymous"></script>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4884786427235490"
-     crossorigin="anonymous"></script>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css"
+            rel="stylesheet">
+        <link href="maps_styles.css" rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
 
-
-<link href="maps_styles.css" rel="stylesheet">
-
-<!-- Adicione outras bibliotecas do Firebase conforme necessário -->
-<style>
+        <!-- Adicione outras bibliotecas do Firebase conforme necessário -->
+        <style>
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 </style>
-</head>
 
-<body>
+        <script>
+    function atualizarTexto(lat, lng) {
+     // document.getElementById("meuParagrafo").innerHTML = "Texto atualizado!";
+     console.log('Chamou a função');
+      const novoItem = {
+        'type': 'Feature',
+        'properties': {
+          'message': 'Novo Item',
+          'imageId': 1011, // Substitua pelo ID da imagem desejada
+          'iconSize': [30, 30] // Substitua pelo tamanho desejado
+        },
+        'geometry': {
+          'type': 'Point',
+          'coordinates':[lat , lng]//
+         
+        }
+      };
 
-    <!-- Correct usage in HTML -->
-   
+    updateMarkers(novoItem);
+    }
+    </script>
 
-    <!-- <script type="module">
+    </head>
+
+    <body>
+
+        <!-- Correct usage in HTML -->
+
+        <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"; 
+        import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+         
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
       
@@ -48,11 +80,45 @@ body { margin: 0; padding: 0; }
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-    </script> -->
+        const db  = getFirestore(app);
+
+        const querySnapshot = await getDocs(collection(db, "users"));
+       /* querySnapshot.forEach((doc) => {
+            const data = doc.data(); 
+          console.log(`${data.nome}  ${data.idade}`);
+        })*/
 
 
+        const unsub = onSnapshot(doc(db, "users", "doc"), (doc) => {
+            const data = doc.data(); 
+            
+            //atualizarTexto(`${data.lat}`,`${data.lng}` );
+            atualizarTexto(-34.94634141, -8.03939031 );
+            console.log(`${data.lat}  ${data.lng}`);
+        });
 
-  <style>
+
+        // Obtenha dados de uma coleção específica
+       /* db.collection("user")
+        .get(doc)
+        .then((querySnapshot) => {
+            const dataContainer = document.getElementById("data-container");
+            querySnapshot.forEach((doc) => {
+            // doc.data() é um objeto com os dados do documento
+            const data = doc.data();
+            // Crie elementos HTML para exibir os dados
+            const p = document.createElement("p");
+            p.textContent = `Nome: ${data.nome}, Idade: ${data.idade}`;
+            dataContainer.appendChild(p);
+            });
+        })
+        .catch((error) => {
+            console.error("Erro ao obter documentos: ", error);
+        });*/
+        
+    </script>
+
+        <style>
     .listing-group {
         font:
             12px/20px 'Helvetica Neue',
@@ -106,12 +172,17 @@ body { margin: 0; padding: 0; }
     }
 </style>
 
+        <div class="jumbotron">
+            <h1>Hello, world!</h1>
+            <p>...</p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn
+                    more</a></p>
+        </div>
 
+        <div id="map"></div>
 
-<div id="map"></div>
-
-<nav id="li" class="listing-group">
-  <!-- <input type="checkbox" id="scrollZoom" checked="checked">
+        <nav id="li" class="listing-group">
+            <!-- <input type="checkbox" id="scrollZoom" checked="checked">
   <label for="scrollZoom">Scroll zoom</label>
   <input type="checkbox" id="boxZoom" checked="checked">
   <label for="boxZoom">Box zoom</label>
@@ -125,43 +196,52 @@ body { margin: 0; padding: 0; }
   <label for="doubleClickZoom">Double click zoom</label>
   <input type="checkbox" id="touchZoomRotate" checked="checked">
   <label for="touchZoomRotate">Touch zoom rotate</label> -->
-</nav>
+        </nav>
 
-<div class="map-overlay top">
-    <div class="map-overlay-inner">
-        <fieldset class="select-fieldset">
-            <label>Select light preset</label>
-            <select id="lightPreset" name="lightPreset">
-                <!-- Each value matches a light preset -->
-                <option value="dawn">Dawn</option>
-                <option value="day" selected="">Day</option>
-                <option value="dusk">Dusk</option>
-                <option value="night">Night</option>
-            </select>
-        </fieldset>
-        <fieldset>
-            <label for="showPlaceLabels">Show place labels</label>
-            <input type="checkbox" id="showPlaceLabels" checked="">
-        </fieldset>
-        <fieldset>
-            <label for="showPointOfInterestLabels">Show POI labels</label>
-            <input type="checkbox" id="showPointOfInterestLabels" checked="">
-        </fieldset>
-        <fieldset>
-            <label for="showRoadLabels">Show road labels</label>
-            <input type="checkbox" id="showRoadLabels" checked="">
-        </fieldset>
-        <fieldset>
-            <label for="showTransitLabels">Show transit labels</label>
-            <input type="checkbox" id="showTransitLabels" checked="">
-        </fieldset>
     </div>
-</div>
 
-<script type="module" src="firebase.js"></script>
+    <div class="map-overlay top">
+        <div class="map-overlay-inner">
+            <fieldset class="select-fieldset">
+                <label>Select light preset</label>
+                <select id="lightPreset" name="lightPreset">
+                    <!-- Each value matches a light preset -->
+                    <option value="dawn">Dawn</option>
+                    <option value="day" selected>Day</option>
+                    <option value="dusk">Dusk</option>
+                    <option value="night">Night</option>
+                </select>
+            </fieldset>
+            <fieldset>
+                <label for="showPlaceLabels">Show place labels</label>
+                <input type="checkbox" id="showPlaceLabels" checked>
+            </fieldset>
+            <fieldset>
+                <label for="showPointOfInterestLabels">Show POI labels</label>
+                <input type="checkbox" id="showPointOfInterestLabels" checked>
+            </fieldset>
+            <fieldset>
+                <label for="showRoadLabels">Show road labels</label>
+                <input type="checkbox" id="showRoadLabels" checked>
+            </fieldset>
+            <fieldset>
+                <label for="showTransitLabels">Show transit labels</label>
+                <input type="checkbox" id="showTransitLabels" checked>
+            </fieldset>
+        </div>
+        <button onclick="atualizarTexto()">Atualizar Texto</button>
+    </div>
 
-<script src="map.js"></script>
+    <script src="firebase.js"></script>
 
+    <script src="map.js"></script>
 
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 
 </body>

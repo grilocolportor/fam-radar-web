@@ -1,6 +1,8 @@
 
 // function getdaddos(){
 //     const db = firebase.firestore();
+
+
   
 //     // Adicionar dados ao Firestore
 //     // db.collection("users").add({
@@ -39,10 +41,19 @@
 //       });
 //   }
 
+// const meuModulo = require("firebase.js");
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoidmVuYW5jaW83NzciLCJhIjoiY2x0Znd2c3doMHZpYjJxbzUza3k0cnJ4ZCJ9.OH6-0UT-DPVS1KpeRksJsQ';
 
-//marker
+
+
+
+function updateMarkers(item){
+    console.log('Deus muito certo');
+
+
+    //marker
 const geojson = {
     'type': 'FeatureCollection',
     'features': [
@@ -79,13 +90,36 @@ const geojson = {
             },
             'geometry': {
                 'type': 'Point',
-                'coordinates': [-34.94634141, -8.03939031]
+                'coordinates':  [-34.94634141, -8.03939031]
             }
         }
     ]
 };
 
-///
+
+geojson.features.push(item);
+
+    for (const marker of geojson.features) {
+        // Create a DOM element for each marker.
+        const el = document.createElement('div');
+        const width = marker.properties.iconSize[0];
+        const height = marker.properties.iconSize[1];
+        el.className = 'marker';
+        el.style.backgroundImage = `url(https://picsum.photos/id/${marker.properties.imageId}/${width}/${height})`;
+        el.style.width = `${width}px`;
+        el.style.height = `${height}px`;
+        el.style.backgroundSize = '100%';
+    
+        el.addEventListener('click', () => {
+            window.alert(marker.properties.message);
+        });
+    
+        // Add markers to the map.
+        new mapboxgl.Marker(el)
+            .setLngLat(marker.geometry.coordinates)
+            .addTo(map);
+    }
+}
 
 
 const map = new mapboxgl.Map({
@@ -112,27 +146,10 @@ function flytocustom() {
 
 //add marker on map
  // Add markers to the map.
- for (const marker of geojson.features) {
-    // Create a DOM element for each marker.
-    const el = document.createElement('div');
-    const width = marker.properties.iconSize[0];
-    const height = marker.properties.iconSize[1];
-    el.className = 'marker';
-    el.style.backgroundImage = `url(https://picsum.photos/id/${marker.properties.imageId}/${width}/${height})`;
-    el.style.width = `${width}px`;
-    el.style.height = `${height}px`;
-    el.style.backgroundSize = '100%';
 
-    el.addEventListener('click', () => {
-        window.alert(marker.properties.message);
-    });
-
-    // Add markers to the map.
-    new mapboxgl.Marker(el)
-        .setLngLat(marker.geometry.coordinates)
-        .addTo(map);
-}
 //
+
+
 
 function rotateCamera(timestamp) {
     // clamp the rotation between 0 -360 degrees
