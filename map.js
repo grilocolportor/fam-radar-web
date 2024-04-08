@@ -1,64 +1,54 @@
-
 // function getdaddos(){
-//     const db = firebase.firestore();
+// const db = firebase.firestore();
 
+// // Adicionar dados ao Firestore
+// // db.collection("users").add({
+// // firstName: "John",
+// // lastName: "Doe"
+// // })
+// // .then((docRef) => {
+// // console.log("Documento escrito com ID: ", docRef.id);
+// // })
+// // .catch((error) => {
+// // console.error("Erro ao adicionar documento: ", error);
+// // });
 
-  
-//     // Adicionar dados ao Firestore
-//     // db.collection("users").add({
-//     //   firstName: "John",
-//     //   lastName: "Doe"
-//     // })
-//     // .then((docRef) => {
-//     //   console.log("Documento escrito com ID: ", docRef.id);
-//     // })
-//     // .catch((error) => {
-//     //   console.error("Erro ao adicionar documento: ", error);
-//     // });
-    
-//     //<input type="checkbox" id="scrollZoom" checked="checked"></input>
-    
-//     db.collection("users").get().then((querySnapshot) => {
-//         const dados = [];
-//         querySnapshot.forEach((doc) => {
-//           dados.push({
-//             id: doc.id,
-//             nome: doc.data().nome,
-//             idade: doc.data().idade,
-//           });
-//         });
-//         const jsonDados = JSON.stringify(dados);
-//         console.log(jsonDados);
-//         // Utilize o jsonDados aqui
-    
-//         const itemElement = document.createElement("li");
-//         itemElement.innerHTML = `
-//           <h3>${item.nome}</h3>
-//           <p>Idade: ${item.idade}</p>
-//         `;
-//         itemElement.classList.add("item"); // Adicionar uma classe para estilização
-//         dataContainer.appendChild(itemElement);
-//       });
-//   }
+// //<input type="checkbox" id="scrollZoom" checked="checked"></input>
+
+// db.collection("users").get().then((querySnapshot) => {
+// const dados = [];
+// querySnapshot.forEach((doc) => {
+// dados.push({
+// id: doc.id,
+// nome: doc.data().nome,
+// idade: doc.data().idade,
+// });
+// });
+// const jsonDados = JSON.stringify(dados);
+// console.log(jsonDados);
+// // Utilize o jsonDados aqui
+
+// const itemElement = document.createElement("li");
+// itemElement.innerHTML = `
+// <h3>${item.nome}</h3>
+// <p>Idade: ${item.idade}</p>
+// `;
+// itemElement.classList.add("item"); // Adicionar uma classe para estilização
+// dataContainer.appendChild(itemElement);
+// });
+// }
 
 // const meuModulo = require("firebase.js");
 
-
 mapboxgl.accessToken = 'pk.eyJ1IjoidmVuYW5jaW83NzciLCJhIjoiY2x0Znd2c3doMHZpYjJxbzUza3k0cnJ4ZCJ9.OH6-0UT-DPVS1KpeRksJsQ';
 
-
-
-
-function updateMarkers(item){
-    console.log('Deus muito certo');
-
-
-    //marker
-const geojson = {
+   //marker
+   /*const geojson = {
     'type': 'FeatureCollection',
     'features': [
         {
             'type': 'Feature',
+            'id' : 1,
             'properties': {
                 'message': 'Foo',
                 'imageId': 1011,
@@ -71,6 +61,7 @@ const geojson = {
         },
         {
             'type': 'Feature',
+            'id' : 2,
             'properties': {
                 'message': 'Bar',
                 'imageId': 870,
@@ -83,6 +74,7 @@ const geojson = {
         },
         {
             'type': 'Feature',
+            'id' : 3,
             'properties': {
                 'message': 'Baz',
                 'imageId': 837,
@@ -90,37 +82,75 @@ const geojson = {
             },
             'geometry': {
                 'type': 'Point',
-                'coordinates':  [-34.94634141, -8.03939031]
+                'coordinates': [-34.94634141, -8.03939031]
+            }
+        },
+        {
+            'type': 'Feature',
+            'id' : 4,
+            'properties': {
+                'message': 'Novo Item',
+                'imageId': 1011, // Substitua pelo ID da imagem desejada
+                'iconSize': [30, 30] // Substitua pelo tamanho desejado
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [-34.926300,  -8.047300] //
             }
         }
     ]
-};
+};*/
+
+const markers = [];
 
 
-geojson.features.push(item);
 
-    for (const marker of geojson.features) {
+function addMarkers(doc) {
+    console.log(doc);
+
+
+    for (const marker of doc) {
+       // console.log(marker.data().properties.iconSize);
         // Create a DOM element for each marker.
         const el = document.createElement('div');
-        const width = marker.properties.iconSize[0];
-        const height = marker.properties.iconSize[1];
+        const width = marker.data().properties.iconSize[0];
+        const height =  marker.data().properties.iconSize[1];
         el.className = 'marker';
-        el.style.backgroundImage = `url(https://picsum.photos/id/${marker.properties.imageId}/${width}/${height})`;
+        el.style.backgroundImage = `url(https://picsum.photos/id/${marker.data().properties.imageId}/${width}/${height})`;
         el.style.width = `${width}px`;
         el.style.height = `${height}px`;
         el.style.backgroundSize = '100%';
-    
+
         el.addEventListener('click', () => {
-            window.alert(marker.properties.message);
+            window.alert(marker.data().properties.message);
         });
-    
+
         // Add markers to the map.
-        new mapboxgl.Marker(el)
-            .setLngLat(marker.geometry.coordinates)
+        const mapboxMarker = new mapboxgl.Marker(el)
+            .setLngLat(marker.data().geometry.coordinates)
             .addTo(map);
+
+        markers.push(mapboxMarker);
     }
 }
 
+function updateMarkerPosition(markerIndex, newLngLat) {
+    const marker = markers[markerIndex];
+    
+    marker.setLngLat(newLngLat);
+  }
+
+function removeFeatureByProperty(geojson, propertyName, propertyValue) {
+    // Encontra o índice do item com a propriedade e valor especificados
+    const index = geojson.features.findIndex(feature => feature.properties[propertyName] === propertyValue);
+
+    // Remove o item, se encontrado
+    if (index !== -1) {
+        geojson.features.splice(index, 1);
+    } else {
+        console.error("Item não encontrado!");
+    }
+}
 
 const map = new mapboxgl.Map({
     container: 'map', // container ID
@@ -129,7 +159,6 @@ const map = new mapboxgl.Map({
     pitch: 62, // starting pitch
     bearing: -20 // starting bearing
 });
-
 
 //flyto
 function flytocustom() {
@@ -143,13 +172,10 @@ function flytocustom() {
 
 //
 
-
 //add marker on map
- // Add markers to the map.
+// Add markers to the map.
 
 //
-
-
 
 function rotateCamera(timestamp) {
     // clamp the rotation between 0 -360 degrees
@@ -195,9 +221,9 @@ map.on('style.load', () => {
 
     flytocustom();
 
-   // getdaddos();
+    // getdaddos();
 
-   // rotateCamera(0);
+    // rotateCamera(0);
 
 });
 
@@ -215,7 +241,6 @@ document
         });
     });
 
-
 function successCallback(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
@@ -229,7 +254,6 @@ function successCallback(position) {
         center: [longitude, latitude],
         zoom: 15.1,
         essential: true
-        
 
     });
 
@@ -243,11 +267,3 @@ function errorCallback(error) {
     console.error('Erro ao obter a localização:', error);
     // Exibir uma mensagem de erro ou fornecer uma alternativa
 }
-
-
-  
-
- 
-
-
-

@@ -6,11 +6,11 @@
     <title>Change a map's style configuration property</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+     <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script> 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4884786427235490"
         crossorigin="anonymous"></script>
 
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet"> 
     <link href="maps_styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -31,11 +31,21 @@
     </style>
 
     <script>
+
+       /* function loadMarker(){
+            console.log('Chamou a função load markers');
+            addMarkers();
+        }*/
+
+       
+
         function atualizarTexto(lat, lng) {
+           
             // document.getElementById("meuParagrafo").innerHTML = "Texto atualizado!";
             console.log('Chamou a função');
-            const novoItem = {
+         /*   const novoItem = {
                 'type': 'Feature',
+                'id' : 4,
                 'properties': {
                     'message': 'Novo Item',
                     'imageId': 1011, // Substitua pelo ID da imagem desejada
@@ -45,9 +55,12 @@
                     'type': 'Point',
                     'coordinates': [lng, lat] //
                 }
-            };
-            updateMarkers(novoItem);
+            };*/
+           
         }
+
+
+       
     </script>
 
 </head>
@@ -61,8 +74,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"; 
-        import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { collection, getDocs,  doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"; 
          
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
@@ -84,19 +96,41 @@
         const analytics = getAnalytics(app);
         const db  = getFirestore(app);
 
-        const querySnapshot = await getDocs(collection(db, "users"));
-       /* querySnapshot.forEach((doc) => {
+      
+      
+       // const querySnapshot = await getDocs(collection(db, "features", ));
+       /*  const querySnapshot = db.collection('features').doc('CrLxhV1YjSFJ0nuVyDxM');
+        const markesList = [];
+        
+        querySnapshot.forEach((doc) => {
             const data = doc.data(); 
           console.log(`${data.nome}  ${data.idade}`);
-        })*/
+        }) */
 
 
-        const unsub = onSnapshot(doc(db, "users", "doc"), (doc) => {
+        const querySnapshot = await getDocs(collection(db, "features"));
+
+        const markerList = [];
+
+        querySnapshot.forEach((doc) => {
+          markerList.push(doc);
+          console.log(doc.id, " => ", doc.data());
+        });
+
+        addMarkers(markerList);
+
+        //loadMarker();
+
+
+        const unsub = onSnapshot(doc(db, "features", "CrLxhV1YjSFJ0nuVyDxM"), (doc) => {
+           
             const data = doc.data(); 
+            console.log(data.geometry.coordinates[0]);
             
-            atualizarTexto(data.lng,data.lat );
+            updateMarkerPosition(0, data.geometry.coordinates)
+          //  atualizarTexto(data.lng,data.lat );
            // atualizarTexto( -8.045850, -34.926208 );
-            console.log(`${data.lat}  ${data.lng}`);
+          //  console.log(`${data.lat}  ${data.lng}`);
         });
 
 
@@ -117,6 +151,8 @@
         .catch((error) => {
             console.error("Erro ao obter documentos: ", error);
         });*/
+
+        
         
     </script>
 
@@ -232,6 +268,7 @@
             </fieldset>
         </div>
         <button onclick="atualizarTexto()">Atualizar Texto</button>
+        <button onclick="loadMarker()"</button>
     </div>
 
     <script src="firebase.js"></script>
