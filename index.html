@@ -114,7 +114,7 @@
 
         querySnapshot.forEach((doc) => {
           markerList.push(doc);
-          console.log(doc.id, " => ", doc.data());
+         // console.log(doc.id, " => ", doc.data());
         });
 
         addMarkers(markerList);
@@ -125,7 +125,7 @@
         const unsub = onSnapshot(doc(db, "features", "CrLxhV1YjSFJ0nuVyDxM"), (doc) => {
            
             const data = doc.data(); 
-            console.log(data.geometry.coordinates[0]);
+           // console.log(data.geometry.coordinates[0]);
             
             updateMarkerPosition(0, data.geometry.coordinates)
           //  atualizarTexto(data.lng,data.lat );

@@ -106,8 +106,6 @@ const markers = [];
 
 
 function addMarkers(doc) {
-    console.log(doc);
-
 
     for (const marker of doc) {
        // console.log(marker.data().properties.iconSize);
@@ -138,6 +136,15 @@ function updateMarkerPosition(markerIndex, newLngLat) {
     const marker = markers[markerIndex];
     
     marker.setLngLat(newLngLat);
+
+    console.log(newLngLat);
+
+    map.flyTo({
+        center: [newLngLat[0], newLngLat[1]],
+        zoom: 15.1,
+        essential: true
+
+    });
   }
 
 function removeFeatureByProperty(geojson, propertyName, propertyValue) {
