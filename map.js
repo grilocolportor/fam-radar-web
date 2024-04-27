@@ -108,24 +108,24 @@ const markers = [];
 function addMarkers(doc) {
 
     for (const marker of doc) {
-       // console.log(marker.data().properties.iconSize);
+        console.log("marker =>", marker.features[0]);
         // Create a DOM element for each marker.
         const el = document.createElement('div');
-        const width = marker.data().properties.iconSize[0];
-        const height =  marker.data().properties.iconSize[1];
+        const width =  marker.features[0].properties.iconSize[0];
+        const height =  marker.features[0].properties.iconSize[1];
         el.className = 'marker';
-        el.style.backgroundImage = `url(https://picsum.photos/id/${marker.data().properties.imageId}/${width}/${height})`;
+        el.style.backgroundImage =     `url(https://picsum.photos/id/${marker.features[0].properties.imageId}/${width}/${height})`;
         el.style.width = `${width}px`;
         el.style.height = `${height}px`;
         el.style.backgroundSize = '100%';
 
         el.addEventListener('click', () => {
-            window.alert(marker.data().properties.message);
+            window.alert(marker.features[0].properties.message);
         });
 
         // Add markers to the map.
         const mapboxMarker = new mapboxgl.Marker(el)
-            .setLngLat(marker.data().geometry.coordinates)
+            .setLngLat(marker.features[0].geometry.coordinates)
             .addTo(map);
 
         markers.push(mapboxMarker);

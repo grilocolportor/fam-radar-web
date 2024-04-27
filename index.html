@@ -99,22 +99,49 @@
       
       
        // const querySnapshot = await getDocs(collection(db, "features", ));
-       /*  const querySnapshot = db.collection('features').doc('CrLxhV1YjSFJ0nuVyDxM');
+        //const querySnapshot = db.collection('features').doc('CrLxhV1YjSFJ0nuVyDxM');
         const markesList = [];
         
-        querySnapshot.forEach((doc) => {
+       /* querySnapshot.forEach((doc) => {
             const data = doc.data(); 
-          console.log(`${data.nome}  ${data.idade}`);
-        }) */
+          console.log(`${data.geometry.coordinates[0]}  ${data.geometry.coordinates[0]}`);
+          markesList.push(doc);
+         
+        });*/
 
+       // addMarkers(markerList);
+
+
+       const geojson = {
+            'type': 'FeatureCollection',
+            'features': []
+       };
+        
 
         const querySnapshot = await getDocs(collection(db, "features"));
 
         const markerList = [];
 
         querySnapshot.forEach((doc) => {
-          markerList.push(doc);
-         // console.log(doc.id, " => ", doc.data());
+        
+            const newItem = {
+                'type': 'Feature',
+                'id': 1,
+                'properties': {
+                    'message': 'Foo',
+                    'imageId': 1011,
+                    'iconSize': [60, 60]
+                },
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [doc.data().geometry.coordinates[0], doc.data().geometry.coordinates[1]]
+                }
+            };
+        
+          geojson.features.push(newItem);
+
+          markerList.push(geojson);
+          console.log(doc.id, " => ", doc.data().geometry.coordinates[0]);
         });
 
         addMarkers(markerList);
@@ -125,7 +152,7 @@
         const unsub = onSnapshot(doc(db, "features", "CrLxhV1YjSFJ0nuVyDxM"), (doc) => {
            
             const data = doc.data(); 
-           // console.log(data.geometry.coordinates[0]);
+            console.log(data.geometry.coordinates[0]);
             
             updateMarkerPosition(0, data.geometry.coordinates)
           //  atualizarTexto(data.lng,data.lat );
