@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenStreetMap Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        /* Define a altura do elemento div do mapa como 100% da altura da janela de visualização */
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="module" src="/firebase.js"></script>
+    <script  type="module">
+
+        import { db } from "/firebase.js";
+        import { collection, getDocs, onSnapshot, doc  } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        const geojson = {
+            'type': 'FeatureCollection',
+            'features': []
+        };
+
+      //  const unsub = onSnapshot(doc(db, "features", "CrLxhV1YjSFJ0nuVyDxM"), (doc) => {
+           
+       //     const data = doc.data(); 
+       //     console.log(data.geometry.coordinates[0]);
+            
+          //  updateMarkerPosition(0, data.geometry.coordinates)
+          //  atualizarTexto(data.lng,data.lat );
+           // atualizarTexto( -8.045850, -34.926208 );
+          //  console.log(`${data.lat}  ${data.lng}`);
+      //  });
+
+        async function loadMarkers() {
+            const querySnapshot = await getDocs(collection(db, "features"));
+
+            querySnapshot.forEach((doc) => {
+                const newItem = {
+                    'type': 'Feature',
+                    'id': doc.id,
+                    'properties': {
+                        'message': 'Foo',
+                        'imageId': 1011,
+                        'iconSize': [60, 60]
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [doc.data().geometry.coordinates[0], doc.data().geometry.coordinates[1]]
+                    }
+                };
+
+                geojson.features.push(newItem);
+            });
+
+            return geojson;
+        }
+
+        async function initMap() {
+            let markers = await loadMarkers();
+            let marker;
+        
+            // Inicializa o mapa
+            var map = L.map('map').setView([0, 0], 15); // A localização inicial será (0,0)
+        
+            // Adiciona a camada do OpenStreetMap ao mapa
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        
+            // Adiciona marcadores ao mapa
+            markers.features.forEach(markerData => {
+                const { geometry, properties } = markerData;
+                const latLng = [geometry.coordinates[1], geometry.coordinates[0]];
+                marker = L.marker(latLng, {
+                    icon: L.icon({
+                        iconUrl:'https://picsum.photos/id/837/30/30', // URL da sua imagem
+                        iconSize: [40, 40], // Tamanho do ícone
+                        iconAnchor: [20, 20] // Âncora do ícone
+                    })
+                }).addTo(map);
+                marker.bindPopup(properties.message).openPopup();
+            });
+        
+            // Adiciona rastreador de posição
+            map.locate({ setView: true, maxZoom: 16 });
+            function onLocationFound(e) {
+                const newLatLng = [e.latitude, e.longitude]; // Obtém as novas coordenadas
+                map.setView(newLatLng, 15); // Mova a câmera para as novas coordenadas
+                if (marker) {
+                    marker.setLatLng(newLatLng); // Atualiza a posição do marcador para as novas coordenadas
+                } else {
+                    marker = L.marker(newLatLng, {
+                        icon: L.icon({
+                            iconUrl: 'https://picsum.photos/id/837/30/30', // Substitua 'url-da-sua-imagem.png' pelo URL da sua imagem
+                            iconSize: [40, 40], // Tamanho do ícone
+                            iconAnchor: [20, 20] // Âncora do ícone
+                        })
+                    }).addTo(map);
+                }
+                marker.bindPopup("Você está aqui!").openPopup();
+            }
+            map.on('locationfound', onLocationFound);
+        
+            // Escuta por mudanças na coleção de features
+            const unsub = onSnapshot(doc(db, "features", "CrLxhV1YjSFJ0nuVyDxM"), (doc) => {
+                const data = doc.data();
+                if (data && data.geometry && data.geometry.coordinates) {
+                    const newLatLng = [data.geometry.coordinates[1], data.geometry.coordinates[0]]; // Reverter a ordem das coordenadas se necessário
+                    if (marker) {
+                        marker.setLatLng(newLatLng); // Atualiza a posição do marcador para as novas coordenadas
+                    } else {
+                        marker = L.marker(newLatLng, {
+                            icon: L.divIcon({
+                                className: 'custom-div-icon',
+                                html: "<div style='background-color: red; width: 30px; height: 30px; border-radius: 50%;'></div>",
+                                iconUrl: 'https://picsum.photos/id/1011/30/30', // Substitua 'url-da-sua-imagem.png' pelo URL da sua imagem
+                                iconSize: [40, 40], // Tamanho do ícone
+                                iconAnchor: [20, 20] // Âncora do ícone
+                            })
+                        }).addTo(map);
+                    }
+                    marker.bindPopup("Nova posição!").openPopup();
+                    map.setView(newLatLng, 15); // Centraliza o mapa na nova posição do marcador
+                }
+            });
+        }
+        
+      
+        
+        
+        
+        
+        
+
+        let marker; // Variável para armazenar a referência do marcador
+
+        initMap();
+
+    </script>
+</body>
+</html>
